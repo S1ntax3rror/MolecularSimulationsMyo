@@ -25,7 +25,7 @@ def build_H_string(coords_to_build):
 
 
 # Open xyz file
-path = "/home/kaeserj/PycharmProjects/CurveFitMorse/ScanGenerator/MyoTemplate.xyz"
+path = "/WeirdMyoScan/MyoTemplate.xyz"
 
 atoms = read(path)
 nitrogen_atoms = [atom for atom in atoms if atom.symbol == 'N']
@@ -157,7 +157,7 @@ with open('myfile', 'w') as f:
         cnt+=1
 
 template_file_path = "input_orca_qmmm_template.inp"
-input_file_path = "/home/kaeserj/PycharmProjects/CurveFitMorse/ScanGenerator/input/input_orca_scan_0000"
+input_file_path = "/WeirdMyoScan/input/input_orca_scan_0000"
 
 input_file_path_prefix = "input/input_orca_scan_"
 

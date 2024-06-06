@@ -25,7 +25,7 @@ def build_H_string(coords_to_build):
 
 
 # Open xyz file
-path = "/home/kaeserj/PycharmProjects/CurveFitMorse/ScanGenerator/MyoTemplate.xyz"
+path = "/WeirdMyoScan/MyoTemplate.xyz"
 
 atoms = read(path)
 nitrogen_atoms = [atom for atom in atoms if atom.symbol == 'N']
@@ -119,7 +119,7 @@ original_dist_h2 = np.linalg.norm(H_atoms_coords[1] - H_atoms_coords[0])
 original_dist_h2_FE = np.linalg.norm(iron_atom_coords - (H_atoms_coords[0] + H_atoms_coords[1]) / 2)
 
 
-path = "/home/kaeserj/PycharmProjects/CurveFitMorse/ScanGenerator/distancesH2AndFeH2.txt"
+path = "/WeirdMyoScan/distancesH2AndFeH2.txt"
 
 with open(path, "w") as file:
 

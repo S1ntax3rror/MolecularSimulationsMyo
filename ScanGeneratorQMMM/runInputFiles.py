@@ -1,8 +1,8 @@
 import subprocess
 from glob import glob
 
-input_file_path_prefix = "/home/kaeserj/PycharmProjects/CurveFitMorse/ScanGenerator/input/input_orca_scan_"
-output_file_path_prefix = "/home/kaeserj/PycharmProjects/CurveFitMorse/ScanGenerator/output/output_orca_scan_"
+input_file_path_prefix = "/WeirdMyoScan/input/input_orca_scan_"
+output_file_path_prefix = "/WeirdMyoScan/output/output_orca_scan_"
 
 input_file_list = glob(input_file_path_prefix + "*")
 print(input_file_list)
