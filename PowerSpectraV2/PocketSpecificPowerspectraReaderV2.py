@@ -27,8 +27,8 @@ def get_paths(prefix, suffix, num_h):
 #
 
 
-x_lim_max = 4150.
-x_lim_min = 4000.
+x_lim_min = 4407.
+x_lim_max = 4527.
 normconst=1.3
 
 #
@@ -40,7 +40,7 @@ normconst=1.3
 
 
 
-load_from = "noMDCM"
+load_from = "MDCMmorse"
 pocket_to_read = 5
 all_pockets = True
 use_consistent_size = True
@@ -290,7 +290,7 @@ SMALL_SIZE = 16
 MEDIUM_SIZE = 20
 BIGGER_SIZE = 28
 
-plt.figure(figsize=(13, 8))
+plt.figure(figsize=(10, 8))
 
 plt.rc('font', size=SMALL_SIZE)  # controls default text sizes
 plt.rc('axes', titlesize=MEDIUM_SIZE)     # fontsize of the axes title
@@ -322,8 +322,8 @@ plt.xlim(x_lim_min, x_lim_max)
 
 plt.yticks([])
 
-plt.xlabel("frequency (cm$^{-1}$)")
-plt.ylabel("intensity (arb. units)")
+plt.xlabel("Frequency (cm$^{-1}$)")
+plt.ylabel("Intensity (arb. units)")
 
 plt.legend(loc='upper left', title='Pocket', framealpha=1.0)
 
