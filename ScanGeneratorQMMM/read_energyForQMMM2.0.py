@@ -48,7 +48,7 @@ for i in range(len(energy_list)):
     else:
         energy_list[i] -= min_elem
 
-setter = 0.5
+setter = 0.7
 
 while max(energy_list) > setter:
     energy_list[energy_list.index(max(energy_list))] = setter
