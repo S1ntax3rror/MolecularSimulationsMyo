@@ -85,7 +85,7 @@ y_arr = np.arange(len(plane[0]))*y_vector[1]*0.529
 x_grid, y_grid = np.meshgrid(x_arr, y_arr)
 
 
-cut = 0.5
+cut = 15
 plane[plane > cut] = cut
 plane[plane < 0] = 0.000001
 plane * 627.5
@@ -106,7 +106,7 @@ plt.rc('figure', titlesize=MEDIUM_SIZE)  # fontsize of the figure title
 
 # plt.contourf(x_grid, y_grid, plane.T, 10, cmap="inferno_r")
 plt.contourf(x_grid, y_grid, plane.T, 10, cmap="inferno")
-plt.colorbar(label='\nlog$_1$$_0$ ESP + 1 (kcal/mol)')
+plt.colorbar(label='\nlog$_1$$_0$ ESP(kcal/mol)')
 
 plt.xlabel("x-coordinate in $\mathrm{\AA}$")
 plt.ylabel("y-coordinate in $\mathrm{\AA}$")
