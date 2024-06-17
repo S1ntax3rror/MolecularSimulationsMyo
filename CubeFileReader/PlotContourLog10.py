@@ -85,7 +85,7 @@ y_arr = np.arange(len(plane[0]))*y_vector[1]*0.529
 x_grid, y_grid = np.meshgrid(x_arr, y_arr)
 
 
-cut = 3
+cut = 0.5
 plane[plane > cut] = cut
 plane[plane < 0] = 0.000001
 plane * 627.5
@@ -112,6 +112,6 @@ plt.xlabel("x-coordinate in $\mathrm{\AA}$")
 plt.ylabel("y-coordinate in $\mathrm{\AA}$")
 
 
-plt.savefig(dpi=200, fname="contourH2QuadPol", )
+plt.savefig(dpi=200, fname="contourH2QuadPolLog10", )
 
 plt.show()
