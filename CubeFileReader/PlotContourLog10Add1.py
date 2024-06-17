@@ -69,6 +69,106 @@ def get_plane_slice(density_data, origin, x_vector, y_vector, z_vector, point1, 
 
     return slice_2d
 
+def plot_log_add1(cutttt):
+    plane = density_data[n + 1, :, :].copy()
+
+    print(cutttt)
+    plane[plane > cut[x]] = cutttt
+    plane[plane < 0] = 0.000001
+    plane *= 627.5
+    plane += 1
+    plane = np.log10(plane)
+
+    SMALL_SIZE = 16
+    MEDIUM_SIZE = 20
+    BIGGER_SIZE = 28
+
+    plt.figure(figsize=(10, 8))
+
+    plt.rc('font', size=SMALL_SIZE)  # controls default text sizes
+    plt.rc('axes', titlesize=MEDIUM_SIZE)  # fontsize of the axes title
+    plt.rc('axes', labelsize=MEDIUM_SIZE)  # fontsize of the x and y labels
+    plt.rc('xtick', labelsize=MEDIUM_SIZE)  # fontsize of the tick labels
+    plt.rc('legend', fontsize=SMALL_SIZE)  # legend fontsize
+    plt.rc('figure', titlesize=MEDIUM_SIZE)  # fontsize of the figure title
+
+    # plt.contourf(x_grid, y_grid, plane.T, 10, cmap="inferno_r")
+    plt.contourf(x_grid, y_grid, plane.T, 10, cmap="inferno")
+    plt.colorbar(label='\nlog$_1$$_0$ ESP + 1 (kcal/mol)')
+
+    plt.xlabel("x-coordinate in $\mathrm{\AA}$")
+    plt.ylabel("y-coordinate in $\mathrm{\AA}$")
+
+    plt.savefig(dpi=200, fname="contourH2QuadPolLog10Add1_cut_" + str(cutttt) + ".png", )
+
+    plt.show()
+
+def plot_log(cutttt):
+    plane = density_data[n + 1, :, :].copy()
+
+    print(cutttt)
+    plane[plane > cut[x]] = cutttt
+    plane[plane < 0] = 0.000001
+    plane *= 627.5
+    plane = np.log10(plane)
+
+    SMALL_SIZE = 16
+    MEDIUM_SIZE = 20
+    BIGGER_SIZE = 28
+
+    plt.figure(figsize=(10, 8))
+
+    plt.rc('font', size=SMALL_SIZE)  # controls default text sizes
+    plt.rc('axes', titlesize=MEDIUM_SIZE)  # fontsize of the axes title
+    plt.rc('axes', labelsize=MEDIUM_SIZE)  # fontsize of the x and y labels
+    plt.rc('xtick', labelsize=MEDIUM_SIZE)  # fontsize of the tick labels
+    plt.rc('legend', fontsize=SMALL_SIZE)  # legend fontsize
+    plt.rc('figure', titlesize=MEDIUM_SIZE)  # fontsize of the figure title
+
+    # plt.contourf(x_grid, y_grid, plane.T, 10, cmap="inferno_r")
+    plt.contourf(x_grid, y_grid, plane.T, 10, cmap="inferno")
+    plt.colorbar(label='\nlog$_1$$_0$ ESP (kcal/mol)')
+
+    plt.xlabel("x-coordinate in $\mathrm{\AA}$")
+    plt.ylabel("y-coordinate in $\mathrm{\AA}$")
+
+    plt.savefig(dpi=200, fname="contourH2QuadPolLog10cut_" + str(cutttt) + ".png", )
+
+    plt.show()
+
+def plot_default(cutttt):
+    plane = density_data[n + 1, :, :].copy()
+
+    print(cutttt)
+    plane[plane > cut[x]] = cutttt
+    plane[plane < 0] = 0
+    plane *= 627.5
+
+    SMALL_SIZE = 16
+    MEDIUM_SIZE = 20
+    BIGGER_SIZE = 28
+
+    plt.figure(figsize=(10, 8))
+
+    plt.rc('font', size=SMALL_SIZE)  # controls default text sizes
+    plt.rc('axes', titlesize=MEDIUM_SIZE)  # fontsize of the axes title
+    plt.rc('axes', labelsize=MEDIUM_SIZE)  # fontsize of the x and y labels
+    plt.rc('xtick', labelsize=MEDIUM_SIZE)  # fontsize of the tick labels
+    plt.rc('legend', fontsize=SMALL_SIZE)  # legend fontsize
+    plt.rc('figure', titlesize=MEDIUM_SIZE)  # fontsize of the figure title
+
+    # plt.contourf(x_grid, y_grid, plane.T, 10, cmap="inferno_r")
+    plt.contourf(x_grid, y_grid, plane.T, 10, cmap="inferno")
+    plt.colorbar(label='\nESP (kcal/mol)')
+
+    plt.xlabel("x-coordinate in $\mathrm{\AA}$")
+    plt.ylabel("y-coordinate in $\mathrm{\AA}$")
+
+    plt.savefig(dpi=200, fname="contourH2QuadPolDefault" + str(cutttt) + ".png", )
+
+    plt.show()
+
+
 
 file_path = 'h2_esp.cube'
 origin, x_vector, y_vector, z_vector, atoms, density_data = read_cube(file_path)
@@ -84,35 +184,9 @@ y_arr = np.arange(len(plane[0]))*y_vector[1]*0.529
 
 x_grid, y_grid = np.meshgrid(x_arr, y_arr)
 
+cut = [0.01, 0.1, 0.5, 1, 10]
+for x in range(len(cut)):
+    plot_log_add1(cut[x])
+    plot_log(cut[x])
+    plot_default(cut[x])
 
-cut = 0.5
-plane[plane > cut] = cut
-plane[plane < 0] = 0.000001
-plane * 627.5
-plane += 1
-plane = np.log10(plane)
-
-SMALL_SIZE = 16
-MEDIUM_SIZE = 20
-BIGGER_SIZE = 28
-
-plt.figure(figsize=(10, 8))
-
-plt.rc('font', size=SMALL_SIZE)  # controls default text sizes
-plt.rc('axes', titlesize=MEDIUM_SIZE)     # fontsize of the axes title
-plt.rc('axes', labelsize=MEDIUM_SIZE)    # fontsize of the x and y labels
-plt.rc('xtick', labelsize=MEDIUM_SIZE)    # fontsize of the tick labels
-plt.rc('legend', fontsize=SMALL_SIZE)    # legend fontsize
-plt.rc('figure', titlesize=MEDIUM_SIZE)  # fontsize of the figure title
-
-# plt.contourf(x_grid, y_grid, plane.T, 10, cmap="inferno_r")
-plt.contourf(x_grid, y_grid, plane.T, 10, cmap="inferno")
-plt.colorbar(label='\nlog$_1$$_0$ ESP + 1 (kcal/mol)')
-
-plt.xlabel("x-coordinate in $\mathrm{\AA}$")
-plt.ylabel("y-coordinate in $\mathrm{\AA}$")
-
-
-plt.savefig(dpi=200, fname="contourH2QuadPolLog10Add1", )
-
-plt.show()
