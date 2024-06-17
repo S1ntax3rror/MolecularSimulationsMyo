@@ -79,21 +79,39 @@ n = int(abs(origin_x//step_size))
 
 plane = density_data[n+1,:,:]
 
-x_arr = np.arange(len(plane))*step_size
-y_arr = np.arange(len(plane[0]))*y_vector[1]
+x_arr = np.arange(len(plane))*step_size*0.529
+y_arr = np.arange(len(plane[0]))*y_vector[1]*0.529
 
 x_grid, y_grid = np.meshgrid(x_arr, y_arr)
 
-#plt.tricontourf(x_arr, y_arr, plane, 10, cmap="inferno_r")
-cut = 1
-plane[plane > cut] = cut
-plt.contourf(x_grid, y_grid, plane.T, 10, cmap="inferno_r")
-plt.colorbar()
-plt.ylabel("distance COM(H$_2$) to Fe")
-plt.xlabel(r"bond distance H$_2$ ($\mathrm{\AA}$)")
-plt.show()
 
-# point1 = np.array(atoms[0][1:])
-# point2 = np.array(atoms[1][1:])
-#
-# slice_2d = get_plane_slice(density_data, origin, x_vector, y_vector, z_vector, point1, point2)
+cut = 3
+plane[plane > cut] = cut
+plane[plane < 0] = 0.000001
+plane * 627.5
+plane = np.log10(plane)
+
+SMALL_SIZE = 16
+MEDIUM_SIZE = 20
+BIGGER_SIZE = 28
+
+plt.figure(figsize=(10, 8))
+
+plt.rc('font', size=SMALL_SIZE)  # controls default text sizes
+plt.rc('axes', titlesize=MEDIUM_SIZE)     # fontsize of the axes title
+plt.rc('axes', labelsize=MEDIUM_SIZE)    # fontsize of the x and y labels
+plt.rc('xtick', labelsize=MEDIUM_SIZE)    # fontsize of the tick labels
+plt.rc('legend', fontsize=SMALL_SIZE)    # legend fontsize
+plt.rc('figure', titlesize=MEDIUM_SIZE)  # fontsize of the figure title
+
+# plt.contourf(x_grid, y_grid, plane.T, 10, cmap="inferno_r")
+plt.contourf(x_grid, y_grid, plane.T, 10, cmap="inferno")
+plt.colorbar(label='\nlog$_1$$_0$ ESP + 1 (kcal/mol)')
+
+plt.xlabel("x-coordinate in $\mathrm{\AA}$")
+plt.ylabel("y-coordinate in $\mathrm{\AA}$")
+
+
+plt.savefig(dpi=200, fname="contourH2QuadPol", )
+
+plt.show()
