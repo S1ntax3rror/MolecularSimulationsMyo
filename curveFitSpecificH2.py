@@ -37,5 +37,3 @@ plt.plot(xdata, yfit)
 
 plt.show()
 
-# 122.821145339766 kcal /mol
-#

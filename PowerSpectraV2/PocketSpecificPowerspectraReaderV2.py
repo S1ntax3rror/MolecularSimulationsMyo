@@ -5,6 +5,7 @@ from statsmodels.tsa.stattools import acovf
 
 # Matplotlib
 import matplotlib.pyplot as plt
+from matplotlib.offsetbox import AnchoredOffsetbox, TextArea
 
 # Miscellaneous
 import ase.units as units
@@ -26,10 +27,15 @@ def get_paths(prefix, suffix, num_h):
 #plot consts
 #
 
+# Morse MDCM
+# x_lim_min = 4407.
+# x_lim_max = 4527.
 
-x_lim_min = 4407.
-x_lim_max = 4527.
-normconst=1.3
+# CGenFF
+x_lim_min = 4013.
+x_lim_max = 4133.
+
+normconst = 1.3
 
 #
 # replace distfile with the path to the H2 distances
@@ -39,13 +45,12 @@ normconst=1.3
 #
 
 
-
-load_from = "MDCMmorse"
+load_from = "noMDCM"
 pocket_to_read = 5
 all_pockets = True
 use_consistent_size = True
-frame_size = 20000  #only used if consistent size is activated
-h2_to_show = [1,2,3,4,5]
+frame_size = 20000  # only used if consistent size is activated
+h2_to_show = [1, 2, 3, 4, 5]
 
 load_from = load_from.split(" ")
 pocket_libs = []
@@ -95,7 +100,6 @@ for lib in pocket_libs:
                 pocket_info_matrix.append([int(line[0]), int(line[1]), int(line[2]), int(line[3])])
             elif int(line[1]) == pocket_to_read:
                 pocket_info_matrix.append([int(line[0]), int(line[1]), int(line[2]), int(line[3])])
-
 
 freq = []
 spec = []
@@ -174,7 +178,6 @@ def helper(cnt, freq, spec, ampl_h2, pocket_number):
     return cnt, freq, spec, ampl_h2, pocket_number
 
 
-
 def helperForCompleteSpectra(file):
     # -----------------------------
     # Parameters
@@ -217,7 +220,7 @@ def helperForCompleteSpectra(file):
     acv = acovf(h2_distances, fft=True)
 
     acv = acv * np.blackman(nf)
-    spec2 =np.abs(np.fft.rfftn(acv))
+    spec2 = np.abs(np.fft.rfftn(acv))
 
     beta = 1.0 / (kB_Ha_K * au2cminv) / T
     spec2 = spec2 * freq2 * (1 - np.exp(-freq2 * beta))
@@ -242,13 +245,13 @@ def helperForCompleteSpectra(file):
 
 
 for data_list in pocket_info_matrix:
-    distfile = paths[data_list[0]-1]
+    distfile = paths[data_list[0] - 1]
 
     start_frame = data_list[2]
     end_frame = data_list[3]
 
     if use_consistent_size:
-        if end_frame-start_frame < frame_size:
+        if end_frame - start_frame < frame_size:
             continue
         start_frame = data_list[2]
         end_frame = start_frame + frame_size
@@ -262,7 +265,6 @@ for data_list in pocket_info_matrix:
     else:
         cnt, freq, spec, ampl_h2, pocket_number = helper(cnt, freq, spec, ampl_h2, pocket_number)
 
-
 spec_avg = np.zeros_like(spec[0])
 
 total_spec = []
@@ -273,9 +275,9 @@ for i in range(len(h2_to_show)):
     else:
         total_spec, freq2, ampl_h2 = helperForCompleteSpectra(paths[i])
         total_spec = np.array(total_spec)
-print(total_spec.shape)
-print(len(one_spec))
-print(len(freq2))
+# print(total_spec.shape)
+# print(len(one_spec))
+# print(len(freq2))
 # np.save(spec_avg, "spec_avg" + load_from + "all_pockets")
 
 # for i in range(len(freq)):
@@ -290,31 +292,57 @@ SMALL_SIZE = 16
 MEDIUM_SIZE = 20
 BIGGER_SIZE = 28
 
-plt.figure(figsize=(10, 8))
-
 plt.rc('font', size=SMALL_SIZE)  # controls default text sizes
-plt.rc('axes', titlesize=MEDIUM_SIZE)     # fontsize of the axes title
-plt.rc('axes', labelsize=MEDIUM_SIZE)    # fontsize of the x and y labels
-plt.rc('xtick', labelsize=MEDIUM_SIZE)    # fontsize of the tick labels
-plt.rc('legend', fontsize=SMALL_SIZE)    # legend fontsize
+plt.rc('axes', titlesize=MEDIUM_SIZE)  # fontsize of the axes title
+plt.rc('axes', labelsize=MEDIUM_SIZE)  # fontsize of the x and y labels
+plt.rc('xtick', labelsize=MEDIUM_SIZE)  # fontsize of the tick labels
+plt.rc('legend', fontsize=SMALL_SIZE)  # legend fontsize
 plt.rc('figure', titlesize=MEDIUM_SIZE)  # fontsize of the figure title
+
+fig = plt.figure(figsize=(8, 8))
+axs = fig.add_subplot(1, 1, 1)
+
 cnt = 0
+
+color_scheme = [
+    'b', 'r', 'g', 'purple', 'orange', 'magenta', 'brown', 'darkblue',
+    'darkred', 'darkgreen', 'darkgrey', 'olive']
+
+pockets_to_display = [2, 4, 5, 7]
+
+spec_avg_list = []
 
 for pocket_i in range(9):
     spec_avg = np.zeros_like(spec[0])
     available = False
     for i in range(len(freq)):
-        if pocket_number[i][1] == pocket_i:
+        if pocket_number[i][1] == pocket_i + 1:
             spec_avg += spec[i]
             available = True
-    if available:
+    if available and pocket_i + 1 in pockets_to_display:
         cnt += 1
+        spec_avg_list.append(spec_avg)
         ampl_avg = np.max(spec_avg[freq[0] > 3500.])
-        plt.plot(freq[0], spec_avg/(ampl_avg*normconst) + cnt/1.8, label=str(pocket_i), linewidth=2.0)
+        plt.plot(freq[0], spec_avg / (ampl_avg * normconst) + 5 / 1.8 - cnt / 1.8, label=str(pocket_i + 1),
+                 linewidth=2.0, color=color_scheme[pocket_i])
 #        print(pocket_number[i][0], pocket_number[i][1], pocket_number[i][2], pocket_number[i][3])
 
+np_spec_avg = np.array(spec_avg_list)
+np.savez("spec_avg_save", spec_avg=np_spec_avg, freq=freq[0])
+
 ampl_avg = np.max(total_spec[freq2 > 3500.])
-plt.plot(freq2, total_spec/(ampl_avg*normconst), 'k', label=str("total_spec"), linewidth=4.0)
+plt.plot(freq2, total_spec / (ampl_avg * normconst), 'k', label=str("total"), linewidth=4.0)
+
+tbox = TextArea(
+    'B',
+    textprops=dict(
+        color='k', fontsize=35, ha='center', va='center')
+)
+anchored_tbox = AnchoredOffsetbox(
+    loc="upper right", child=tbox, pad=0., frameon=False,
+    bbox_to_anchor=(0.97, 0.97),
+    bbox_transform=axs.transAxes, borderpad=0.)
+axs.add_artist(anchored_tbox)
 
 plt.xlim(x_lim_min, x_lim_max)
 
@@ -322,11 +350,34 @@ plt.xlim(x_lim_min, x_lim_max)
 
 plt.yticks([])
 
+if load_from[0] == "MDCMmorse":
+    loader = np.load("middle_mdcm_morse.npz")
+    pos = loader["pos"]
+    cnt = 0
+    for tup in pos:
+        pocket_i = pockets_to_display[cnt]
+        cnt += 1
+        print(tup)
+        plt.scatter(tup[0], 5 / 1.8 - (cnt-1) / 1.8,color=color_scheme[pocket_i], marker="o")
+        # plt.scatter(tup[1], 5 / 1.8 - (cnt-1) / 1.8,color=color_scheme[pocket_i], marker="o", alpha=0.6)
+
+if load_from[0] == "noMDCM":
+    loader = np.load("middle_NoMDCM.npz")
+    pos = loader["pos"]
+    cnt = 0
+    for tup in pos:
+        pocket_i = pockets_to_display[cnt]
+        cnt += 1
+        print(tup)
+        plt.scatter(tup[0], 5 / 1.8 - (cnt-1) / 1.8,color=color_scheme[pocket_i], marker="o")
+        # plt.scatter(tup[1], 5 / 1.8 - (cnt-1) / 1.8,color=color_scheme[pocket_i], marker="o", alpha=0.6)
+
+
+
 plt.xlabel("Frequency (cm$^{-1}$)")
 plt.ylabel("Intensity (arb. units)")
 
-plt.legend(loc='upper left', title='Pocket', framealpha=1.0)
-
+plt.legend(loc='upper left', title='H$_2$ in Pocket', framealpha=1.0)
 
 plt.savefig(dpi=200, fname=str(load_from[0]), )
 
