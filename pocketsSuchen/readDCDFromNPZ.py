@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 from ase import Atoms
 from ase import io
 prefix = "pocket_arrays/"
-distfile = "pocket_arrays_V13.5_H2.DCD_files.1-38.H2_num5.npz"
+distfile = "pocket_arrays_V10.DCD_files.1-90.H2_num4.npz"
 h2_read = 5
 min_intervall_length = 20000
 angstroemcap = 5

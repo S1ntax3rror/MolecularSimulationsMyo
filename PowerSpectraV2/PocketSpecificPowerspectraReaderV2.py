@@ -334,7 +334,7 @@ ampl_avg = np.max(total_spec[freq2 > 3500.])
 plt.plot(freq2, total_spec / (ampl_avg * normconst), 'k', label=str("total"), linewidth=4.0)
 
 tbox = TextArea(
-    'B',
+    'A',
     textprops=dict(
         color='k', fontsize=35, ha='center', va='center')
 )
@@ -358,7 +358,7 @@ if load_from[0] == "MDCMmorse":
         pocket_i = pockets_to_display[cnt]
         cnt += 1
         print(tup)
-        plt.scatter(tup[0], 5 / 1.8 - (cnt-1) / 1.8,color=color_scheme[pocket_i], marker="o")
+        plt.scatter(tup[0], 5 / 1.8 - (cnt-1) / 1.8, color=color_scheme[pocket_i], marker="o")
         # plt.scatter(tup[1], 5 / 1.8 - (cnt-1) / 1.8,color=color_scheme[pocket_i], marker="o", alpha=0.6)
 
 if load_from[0] == "noMDCM":
