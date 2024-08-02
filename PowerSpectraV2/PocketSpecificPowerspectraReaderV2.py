@@ -27,13 +27,6 @@ def get_paths(prefix, suffix, num_h):
 #plot consts
 #
 
-# Morse MDCM
-# x_lim_min = 4407.
-# x_lim_max = 4527.
-
-# CGenFF
-x_lim_min = 4013.
-x_lim_max = 4133.
 
 normconst = 1.3
 
@@ -333,18 +326,7 @@ np.savez("spec_avg_save", spec_avg=np_spec_avg, freq=freq[0])
 ampl_avg = np.max(total_spec[freq2 > 3500.])
 plt.plot(freq2, total_spec / (ampl_avg * normconst), 'k', label=str("total"), linewidth=4.0)
 
-tbox = TextArea(
-    'A',
-    textprops=dict(
-        color='k', fontsize=35, ha='center', va='center')
-)
-anchored_tbox = AnchoredOffsetbox(
-    loc="upper right", child=tbox, pad=0., frameon=False,
-    bbox_to_anchor=(0.97, 0.97),
-    bbox_transform=axs.transAxes, borderpad=0.)
-axs.add_artist(anchored_tbox)
 
-plt.xlim(x_lim_min, x_lim_max)
 
 # plt.title("Powerspectra Average", fontsize=25)
 
@@ -355,25 +337,52 @@ if load_from[0] == "MDCMmorse":
     pos = loader["pos"]
     cnt = 0
     for tup in pos:
-        pocket_i = pockets_to_display[cnt]
+        pocket_i = pockets_to_display[cnt] - 1
         cnt += 1
-        print(tup)
-        plt.scatter(tup[0], 5 / 1.8 - (cnt-1) / 1.8, color=color_scheme[pocket_i], marker="o")
-        # plt.scatter(tup[1], 5 / 1.8 - (cnt-1) / 1.8,color=color_scheme[pocket_i], marker="o", alpha=0.6)
+        # max
+        # plt.scatter(tup[0], 5 / 1.8 - (cnt-1) / 1.8, color=color_scheme[pocket_i], marker="o")
+        # meam
+        plt.scatter(tup[1], 5 / 1.8 - (cnt-1) / 1.8,color=color_scheme[pocket_i], marker="o")
+    plt.vlines(x=4465.4, ymin=0, ymax=36, colors='black', linestyles='--', lw=2)
+    x_lim_min = 4407.
+    x_lim_max = 4527.
+    tbox = TextArea(
+        'B',
+        textprops=dict(
+            color='k', fontsize=35, ha='center', va='center')
+    )
 
 if load_from[0] == "noMDCM":
     loader = np.load("middle_NoMDCM.npz")
     pos = loader["pos"]
     cnt = 0
     for tup in pos:
-        pocket_i = pockets_to_display[cnt]
+        pocket_i = pockets_to_display[cnt] - 1
         cnt += 1
-        print(tup)
-        plt.scatter(tup[0], 5 / 1.8 - (cnt-1) / 1.8,color=color_scheme[pocket_i], marker="o")
-        # plt.scatter(tup[1], 5 / 1.8 - (cnt-1) / 1.8,color=color_scheme[pocket_i], marker="o", alpha=0.6)
+        # max
+        # plt.scatter(tup[0], 5 / 1.8 - (cnt-1) / 1.8,color=color_scheme[pocket_i], marker="o")
+        # mean
+        plt.scatter(tup[1], 5 / 1.8 - (cnt-1) / 1.8, color=color_scheme[pocket_i], marker="o")
+
+    plt.vlines(x=4062.4, ymin=0, ymax=36, colors='black', linestyles='--', lw=2)
+    # CGenFF
+    x_lim_min = 4013.
+    x_lim_max = 4133.
+    tbox = TextArea(
+        'A',
+        textprops=dict(
+            color='k', fontsize=35, ha='center', va='center')
+    )
+
+plt.ylim(0, 3.2)
+plt.xlim(x_lim_min, x_lim_max)
 
 
-
+anchored_tbox = AnchoredOffsetbox(
+    loc="upper right", child=tbox, pad=0., frameon=False,
+    bbox_to_anchor=(0.97, 0.97),
+    bbox_transform=axs.transAxes, borderpad=0.)
+axs.add_artist(anchored_tbox)
 plt.xlabel("Frequency (cm$^{-1}$)")
 plt.ylabel("Intensity (arb. units)")
 

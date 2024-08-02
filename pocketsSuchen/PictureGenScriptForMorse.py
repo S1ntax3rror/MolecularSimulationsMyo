@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.offsetbox import AnchoredOffsetbox, TextArea
 
 distfile = "pocket_arrays/" + 'pocket_arrays_V13.H2_1.DCD_files.1-25.npz'
 
@@ -52,33 +53,48 @@ plt.rc('figure', titlesize=MEDIUM_SIZE)  # fontsize of the figure title
 # plot in which pocket the H2 is
 # plt.plot(x, pocket_arr, linewidth=2.0, label='pocket state')
 fig = plt.figure(figsize=(16, 9))
-
-
-
+ax = fig.add_subplot(1, 1, 1)
 x = x/1000
 
-plt.plot(x[::nplot], pocket_arr[::nplot], linewidth=2.0)
-plt.ylabel("Pocket index")
+
+# plt.plot(x[::nplot], pocket_arr[::nplot], linewidth=2.0)
+# plt.ylabel("Pocket index")
+# tbox = TextArea(
+#     'B',
+#     textprops=dict(
+#         color='k', fontsize=40, ha='center', va='center')
+#     )
 
 
 # plot all distances to H2 for debugging
-# plt.plot(x[::nplot], pocket_XE1_dist_arr[::nplot], linewidth=1.0, label='dist to XE1')
-# plt.plot(x[::nplot], pocket_XE2_dist_arr[::nplot], linewidth=1.0, label='dist to XE2')
-# plt.plot(x[::nplot], pocket_XE3_dist_arr[::nplot], linewidth=1.0, label='dist to XE3')
-# plt.plot(x[::nplot], pocket_XE4_dist_arr[::nplot], linewidth=1.0, label='dist to XE4')
-# plt.plot(x[::nplot], pocket_XE5_dist_arr[::nplot], linewidth=1.0, label='dist to XE5')
-# plt.plot(x[::nplot], pocket_XE6_dist_arr[::nplot], color='black', linewidth=2.0, label='dist to XE6')
-# plt.plot(x[::nplot], pocket_XE7_dist_arr[::nplot], color='gray', linewidth=1.0, label='dist to XE7')
-# plt.plot(x[::nplot], pocket_XE8_dist_arr[::nplot], color='gold', linewidth=1.0, label='dist to XE8')
-# plt.plot(x[::nplot], pocket_XE9_dist_arr[::nplot], color='yellow', linewidth=1.0, label='dist to XE9')
-# plt.xlim(0,600)
-# plt.legend(fancybox=True, loc='upper right', title='Distance H$_2$\nto Pocket', framealpha=1)
-# plt.ylabel("Distance ($\mathrm{\AA}$)")
+plt.plot(x[::nplot], pocket_XE1_dist_arr[::nplot], linewidth=1.0, label='dist to XE1')
+plt.plot(x[::nplot], pocket_XE2_dist_arr[::nplot], linewidth=1.0, label='dist to XE2')
+plt.plot(x[::nplot], pocket_XE3_dist_arr[::nplot], linewidth=1.0, label='dist to XE3')
+plt.plot(x[::nplot], pocket_XE4_dist_arr[::nplot], linewidth=1.0, label='dist to XE4')
+plt.plot(x[::nplot], pocket_XE5_dist_arr[::nplot], linewidth=1.0, label='dist to XE5')
+plt.plot(x[::nplot], pocket_XE6_dist_arr[::nplot], color='black', linewidth=2.0, label='dist to XE6')
+plt.plot(x[::nplot], pocket_XE7_dist_arr[::nplot], color='gray', linewidth=1.0, label='dist to XE7')
+plt.plot(x[::nplot], pocket_XE8_dist_arr[::nplot], color='gold', linewidth=1.0, label='dist to XE8')
+plt.plot(x[::nplot], pocket_XE9_dist_arr[::nplot], color='yellow', linewidth=1.0, label='dist to XE9')
+plt.xlim(0,600)
+plt.legend(fancybox=True, loc='upper right', title='Distance H$_2$\nto Pocket', framealpha=1)
+plt.ylabel("Distance ($\mathrm{\AA}$)")
+tbox = TextArea(
+    'D',
+    textprops=dict(
+        color='k', fontsize=40, ha='center', va='center')
+    )
 
+
+
+anchored_tbox = AnchoredOffsetbox(
+    loc="upper right", child=tbox, pad=0., frameon=False,
+    bbox_to_anchor=(0.05, 0.97),
+    bbox_transform=ax.transAxes, borderpad=0.)
+ax.add_artist(anchored_tbox)
 
 plt.xlabel("Time (ps)")
-
-
+plt.xlim(0, 600)
 
 plt.savefig(dpi=400, fname="CGenFF", )
 plt.show()
