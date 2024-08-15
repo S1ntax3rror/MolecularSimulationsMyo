@@ -52,7 +52,7 @@ au2cminv = 1.0 * units.Hartree / units.J / (units._hplanck * units._c) * 1.e-2
 # -----------------------------
 # Get data
 # -----------------------------
-version = "13.H2_5"
+version = "14.5_H2"
 preprefix = "/cluster/data/toepfer/v" + version + ".nonBonded.morse.mdcm/"
 
 
@@ -68,7 +68,7 @@ timedt = 0.001  # Time / frame in ps
 h2_distances = []
 
 start_dcd = 1
-end_dcd = 49
+end_dcd = 50
 num_files = end_dcd - start_dcd + 1
 paths = []
 
@@ -80,12 +80,13 @@ for i in range(start_dcd, end_dcd + 1):
 # init dcd files
 dcd_list = []
 for i in range(num_files):
-    dcd_list.append(MDAnalysis.Universe(path_psf, paths[i]))
+    if os.path.exists(paths[i]):
+        dcd_list.append(MDAnalysis.Universe(path_psf, paths[i]))
 # dcd = MDAnalysis.Universe(path_psf, file_dcd, file_dcd2)
-
+num_files = len(dcd_list)
 
 for h2_index in range(len(H2_res_list)):
-    print("starting H" + str(h2_index))
+    print("starting H" + str(h2_index+1))
 
     distfile = "h2distsV" + version + ".H2-" + str(h2_index + 1) + ".dcd." + str(start_dcd) + "-" + str(end_dcd) + ".npy"
     # !!!!!!!!!!!!!!! overwrite dist file to read data !!!!!!!!!!!!!!!!!!!!!
@@ -102,7 +103,7 @@ for h2_index in range(len(H2_res_list)):
         h2_distances = []
 
         for i in range(num_files):
-            for jj, frame in enumerate(dcd_list[i].trajectory):
+            for jj, frame in enumerate(dcd_list[i].trajectory[:1000]):
 
                 if not jj % 1000:
                     print("frame: " + str(jj))
@@ -119,7 +120,6 @@ for h2_index in range(len(H2_res_list)):
         np.save(distfile, h2_distances)
 
     else:
-        print(distfile)
         h2_distances = np.load(distfile)
         num_timesteps = len(h2_distances)
         time = np.arange(0, num_timesteps) * timedt
@@ -160,12 +160,11 @@ for h2_index in range(len(H2_res_list)):
 
     plt.xlim(500., 4500)
 
-    plt.title("h2specV11.H2-" + str(h2_index + 1))
+    plt.title("h2spec" + version + "-" + str(h2_index + 1))
 
-    plt.savefig("h2specV11.H2-" + str(h2_index + 1) + ".dcd." + str(start_dcd) + "-" + str(end_dcd) + ".png",
+    plt.savefig("h2spec" + version + "-" + str(h2_index + 1) + ".dcd." + str(start_dcd) + "-" + str(end_dcd) + ".png",
                 format='png')
-    # plt.show()
 
-    specfile = "h2specV11.H2-" + str(h2_index + 1) + ".dcd." + str(start_dcd) + "-" + str(end_dcd) + ".npz"
+    specfile = "h2spec" + version + "-" + str(h2_index + 1) + ".dcd." + str(start_dcd) + "-" + str(end_dcd) + ".npz"
 
     np.savez(specfile, freq=freq, spec=spec)
