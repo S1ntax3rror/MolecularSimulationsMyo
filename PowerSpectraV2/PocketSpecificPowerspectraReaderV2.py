@@ -34,11 +34,11 @@ normconst = 1.3
 # replace distfile with the path to the H2 distances
 #
 # configure which data to include with the load_from
-# options: MDCM, singleMDCM, noMDCM, MDCMmorse, singleMDCMmorse, noMDCMmorse
+# options: MDCM, singleMDCM, noMDCM, MDCMmorse, MDCMmorseV14 singleMDCMmorse, noMDCMmorse
 #
 
 
-load_from = "noMDCM"
+load_from = "MDCMmorseV14"
 pocket_to_read = 5
 all_pockets = True
 use_consistent_size = True
@@ -78,6 +78,12 @@ if "noMDCMmorse" in load_from:
     suffix = ".dcd.1-49.npy"
     pocket_libs.append("PocketLibrary/MorseNoMDCM_lib.txt")
     paths = get_paths(prefix, suffix, 5)
+if "MDCMmorseV14" in load_from:
+    prefix = "MorseMDCMv14/h2distsV14.H2_"
+    suffix = ".H2-1.dcd.1-37.npy"
+    pocket_libs.append("PocketLibrary/MorseMDCMv14_lib.txt")
+    paths = get_paths(prefix, suffix, 5)
+    print(paths)
 
 # contains lists containing num H2, pocket, start, end
 pocket_info_matrix = []
