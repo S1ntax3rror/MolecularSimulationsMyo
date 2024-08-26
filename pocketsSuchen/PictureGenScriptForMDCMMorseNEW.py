@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-distfile = "pocket_arrays/" + 'pocket_arrays_V11.DCD_files.1-10.SOLOH2_num1.npz'
+distfile = "pocket_arrays/" + 'pocket_arrays_v14.5_H2.DCD_files.1-37.H2_num2.npz'
 
 data = np.load(distfile)
 pocket_arr = data['pocket_arr']
