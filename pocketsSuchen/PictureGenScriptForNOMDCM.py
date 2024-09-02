@@ -3,8 +3,9 @@ import matplotlib.pyplot as plt
 from matplotlib.offsetbox import AnchoredOffsetbox, TextArea
 from statistics import mode
 
-distfile = 'pocket_arrays.npz'
-
+prefix = "pocketArray/"
+suffix = 'pocket_arrays.npz'
+distfile = prefix + suffix
 
 data = np.load(distfile)
 pocket_arr = data['pocket_arr']
@@ -26,8 +27,19 @@ max_val = np.max([
     np.max(pocket_XE1_dist_arr), np.max(pocket_XE2_dist_arr), np.max(pocket_XE3_dist_arr), np.max(pocket_XE4_dist_arr),
     np.max(pocket_XE5_dist_arr), np.max(pocket_XE6_dist_arr), np.max(pocket_XE7_dist_arr)])
 
-num_timesteps = 10000
 
+num_timesteps = len(pocket_arr)
+
+max_val = min(max_val, 20)
+
+x = np.arange(num_timesteps)
+
+
+
+
+plt.xlim(0, 925)
+plt.savefig(dpi=400, fname="MorseMDCM_B", )
+plt.show()
 
 def smoothScan(pockets, frame, scan_dist, timesteps):
     active_pocket = []
@@ -52,7 +64,7 @@ def get_active_pocket(pocketList, frame):
 
 
 x = np.arange(num_timesteps)
-
+nplot = 1
 
 SMALL_SIZE = 15
 MEDIUM_SIZE = 22
@@ -70,43 +82,46 @@ fig = plt.figure(figsize=(16, 9))
 ax = fig.add_subplot(1, 1, 1)
 x = x/10
 
-pocket_arr = []
-scan_dist = 10
-for i in range(0, num_timesteps, scan_dist):
-    next100Pockets = smoothScan(pockets, i, scan_dist, num_timesteps)
-    pocket_arr += [next100Pockets]*scan_dist
-
-# plot in which pocket the H2 is
-plt.plot(x+1000, pocket_arr, 'b', linewidth=2.0, label='pocket state')
-plt.plot(x, pocket_arr, 'ob', ms=3.0)
-
-
-plt.ylabel("Pocket index")
-tbox = TextArea(
-    'A',
-    textprops=dict(
-        color='k', fontsize=40, ha='center', va='center')
-    )
-
-
-# plot all distances to H2 for debugging
-# plt.plot(x, pocket_XE1_dist_arr, linewidth=1.0, label=' 1')
-# plt.plot(x, pocket_XE2_dist_arr, linewidth=1.0, label=' 2')
-# plt.plot(x, pocket_XE3_dist_arr, linewidth=1.0, label=' 3')
-# plt.plot(x, pocket_XE4_dist_arr, linewidth=1.0, label=' 4')
-# plt.plot(x, pocket_XE5_dist_arr, linewidth=1.0, label=' 5')
-# plt.plot(x, pocket_XE6_dist_arr, color='black', linewidth=2.0, label=' 6')
-# plt.plot(x, pocket_XE7_dist_arr, color='gray', linewidth=1.0, label=' 7')
-# plt.plot(x, pocket_XE8_dist_arr, color='gold', linewidth=1.0, label=' 8')
-# plt.plot(x, pocket_XE9_dist_arr, color='yellow', linewidth=1.0, label=' 9')
-# plt.ylabel("Distance ($\mathrm{\AA}$)")
-# plt.legend(fancybox=True, loc='upper left', title='Distance H$_2$\nto Pocket', framealpha=1)
+# # plot in which pocket the H2 is
+# pocket_arr = []
+# scan_dist = 10
+# for i in range(0, num_timesteps, scan_dist):
+#     next100Pockets = smoothScan(pockets, i, scan_dist, num_timesteps)
+#     pocket_arr += [next100Pockets]*scan_dist
+# plt.plot(x+1000, pocket_arr, 'b', linewidth=2.0, label='pocket state')
+# plt.plot(x[::nplot], pocket_arr[::nplot], 'ob', ms=3.0, linewidth=2.0)
+#
+#
+# plt.yticks(np.arange(1,10), ["Xe1", "Xe2", "Xe3", "Xe4", "B-state", "6", "7", "8", "9"])
+# plt.ylim(0,10)
+# plt.ylabel("Pocket index")
 # tbox = TextArea(
-#     'C',
+#     'A',
 #     textprops=dict(
 #         color='k', fontsize=40, ha='center', va='center')
 #     )
+# plt.yticks(np.arange(1,10))
 
+
+# plot all distances to H2 for debugging
+plt.plot(x[::nplot], pocket_XE1_dist_arr[::nplot], linewidth=1.0, label='Xe1')
+plt.plot(x[::nplot], pocket_XE2_dist_arr[::nplot], linewidth=1.0, label='Xe2')
+plt.plot(x[::nplot], pocket_XE3_dist_arr[::nplot], linewidth=1.0, label='Xe3')
+plt.plot(x[::nplot], pocket_XE4_dist_arr[::nplot], linewidth=1.0, label='Xe4')
+plt.plot(x[::nplot], pocket_XE5_dist_arr[::nplot], linewidth=1.0, label='B-state')
+plt.plot(x[::nplot], pocket_XE6_dist_arr[::nplot], color='black', linewidth=2.0, label='6')
+plt.plot(x[::nplot], pocket_XE7_dist_arr[::nplot], color='gray', linewidth=1.0, label='7')
+plt.plot(x[::nplot], pocket_XE8_dist_arr[::nplot], color='gold', linewidth=1.0, label='8')
+plt.plot(x[::nplot], pocket_XE9_dist_arr[::nplot], color='yellow', linewidth=1.0, label='9')
+plt.xlim(0, 600)
+plt.legend(fancybox=True, loc='upper left', title='Distance H$_2$\nto Pocket', framealpha=1)
+plt.ylabel("Distance ($\mathrm{\AA}$)")
+tbox = TextArea(
+    'C',
+    textprops=dict(
+        color='k', fontsize=40, ha='center', va='center')
+    )
+plt.ylim(0, 25)
 
 
 anchored_tbox = AnchoredOffsetbox(
@@ -117,10 +132,12 @@ ax.add_artist(anchored_tbox)
 
 
 plt.xlim(0, 925)
-plt.ylim(0, 10)
-plt.yticks(np.arange(1,10))
+
 plt.xlabel("Time (ps)")
 
-plt.savefig(dpi=400, fname="CGenFF", )
+plt.savefig(dpi=400, fname="CGenFF" + ".png", )
 plt.show()
 
+
+
+#

@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from matplotlib.offsetbox import AnchoredOffsetbox, TextArea
 from statistics import mode
 
-prefix = "pocket_arrays/"
+prefix = "pocketArray/v14.5_H2.eval/"
 suffix = 'pocket_arrays_v14.5_H2.DCD_files.1-37.H2_num2.npz'
 distfile = prefix + suffix
 
@@ -91,17 +91,22 @@ x = x / 1000
 #     textprops=dict(
 #         color='k', fontsize=40, ha='center', va='center')
 # )
+# plt.yticks(np.arange(1,10), ["Xe1", "Xe2", "Xe3", "Xe4", "B-state", "6", "7", "8", "9"])
+# plt.ylim(0,10)
+
+
+
 
 # plot all distances to H2 for debugging
-plt.plot(x[::nplot], pocket_XE1_dist_arr[::nplot], linewidth=1.0, label='dist to XE1')
-plt.plot(x[::nplot], pocket_XE2_dist_arr[::nplot], linewidth=1.0, label='dist to XE2')
-plt.plot(x[::nplot], pocket_XE3_dist_arr[::nplot], linewidth=1.0, label='dist to XE3')
-plt.plot(x[::nplot], pocket_XE4_dist_arr[::nplot], linewidth=1.0, label='dist to XE4')
-plt.plot(x[::nplot], pocket_XE5_dist_arr[::nplot], linewidth=1.0, label='dist to XE5')
-plt.plot(x[::nplot], pocket_XE6_dist_arr[::nplot], color='black', linewidth=2.0, label='dist to XE6')
-plt.plot(x[::nplot], pocket_XE7_dist_arr[::nplot], color='gray', linewidth=1.0, label='dist to XE7')
-plt.plot(x[::nplot], pocket_XE8_dist_arr[::nplot], color='gold', linewidth=1.0, label='dist to XE8')
-plt.plot(x[::nplot], pocket_XE9_dist_arr[::nplot], color='yellow', linewidth=1.0, label='dist to XE9')
+plt.plot(x[::nplot], pocket_XE1_dist_arr[::nplot], linewidth=1.0, label='Xe1')
+plt.plot(x[::nplot], pocket_XE2_dist_arr[::nplot], linewidth=1.0, label='Xe2')
+plt.plot(x[::nplot], pocket_XE3_dist_arr[::nplot], linewidth=1.0, label='Xe3')
+plt.plot(x[::nplot], pocket_XE4_dist_arr[::nplot], linewidth=1.0, label='Xe4')
+plt.plot(x[::nplot], pocket_XE5_dist_arr[::nplot], linewidth=1.0, label='B-state')
+plt.plot(x[::nplot], pocket_XE6_dist_arr[::nplot], color='black', linewidth=2.0, label='6')
+plt.plot(x[::nplot], pocket_XE7_dist_arr[::nplot], color='gray', linewidth=1.0, label='7')
+plt.plot(x[::nplot], pocket_XE8_dist_arr[::nplot], color='gold', linewidth=1.0, label='8')
+plt.plot(x[::nplot], pocket_XE9_dist_arr[::nplot], color='yellow', linewidth=1.0, label='9')
 plt.xlim(0,600)
 plt.legend(fancybox=True, loc='upper right', title='Distance H$_2$\nto Pocket', framealpha=1)
 plt.ylabel("Distance ($\mathrm{\AA}$)")
@@ -110,7 +115,7 @@ tbox = TextArea(
     textprops=dict(
         color='k', fontsize=40, ha='center', va='center')
     )
-
+plt.ylim(0, 25)
 
 anchored_tbox = AnchoredOffsetbox(
     loc="upper right", child=tbox, pad=0., frameon=False,
@@ -119,9 +124,8 @@ anchored_tbox = AnchoredOffsetbox(
 ax.add_artist(anchored_tbox)
 
 plt.xlabel("Time (ps)")
-plt.xlim(0, 925)
-plt.ylim(0, 25)
-# plt.yticks(np.arange(1, 10))
 
+
+plt.xlim(0, 925)
 plt.savefig(dpi=400, fname="MorseMDCM_B", )
 plt.show()
