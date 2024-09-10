@@ -22,14 +22,14 @@ def calc_pocket_pos(pocket_indices):
 
 split_dcd = ['.', 1]  # split a each '.' and take element [1] in filename_dcd
 
-path_psf = '/home/kaeserj/PycharmProjects/CurveFitMorse/Data/step3_pbcsetup.psf'
+path_psf = '../Data/v14/step3_pbcsetup.psf'
 
-datadir = '/Data/dcdFiles'
+datadir = '/Data/v14/dyna11.dcd'
 
-file_list_dcd = []
+file_list_dcd = [datadir]
 
-for i in range(1, 11):
-    file_list_dcd.append('/home/kaeserj/PycharmProjects/CurveFitMorse/Data/dcdFiles/dyna.' + str(i) + '.dcd')
+# for i in range(1, 11):
+#     file_list_dcd.append('../Data/dcdFiles/dyna.' + str(i) + '.dcd')
 
 start_frame = 0
 end_frame = 250

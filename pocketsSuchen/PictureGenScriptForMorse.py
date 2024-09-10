@@ -59,9 +59,9 @@ nplot = 100
 
 x = np.arange(num_timesteps)
 
-SMALL_SIZE = 15
-MEDIUM_SIZE = 22
-BIGGER_SIZE = 28
+SMALL_SIZE = 20
+MEDIUM_SIZE = 35
+BIGGER_SIZE = 40
 
 plt.rc('font', size=SMALL_SIZE)  # controls default text sizes
 plt.rc('axes', titlesize=MEDIUM_SIZE)  # fontsize of the axes title
@@ -72,50 +72,60 @@ plt.rc('legend', fontsize=SMALL_SIZE)  # legend fontsize
 plt.rc('figure', titlesize=MEDIUM_SIZE)  # fontsize of the figure title
 
 fig = plt.figure(figsize=(16, 9))
-ax = fig.add_subplot(1, 1, 1)
+ax = fig.add_axes([0.15, 0.15, 0.8, 0.8])
 x = x / 1000
 
-# # plot in which pocket the H2 is
-# pocket_arr = []
-# scan_dist = 2500
-# for i in range(0, num_timesteps, scan_dist):
-#     next100Pockets = smoothScan(pockets, i, scan_dist, num_timesteps)
-#     pocket_arr += [next100Pockets]*scan_dist
-#
-# plt.plot(x+1000, pocket_arr, 'b', linewidth=2.0, label='pocket state')
-# plt.plot(x[::nplot], pocket_arr[::nplot], 'ob', ms=3.0, linewidth=2.0)
-#
-# plt.ylabel("Pocket index")
-# tbox = TextArea(
-#     'B',
-#     textprops=dict(
-#         color='k', fontsize=40, ha='center', va='center')
-# )
-# plt.yticks(np.arange(1,10), ["Xe1", "Xe2", "Xe3", "Xe4", "B-state", "6", "7", "8", "9"])
-# plt.ylim(0,10)
 
 
+plotter = 1
 
 
-# plot all distances to H2 for debugging
-plt.plot(x[::nplot], pocket_XE1_dist_arr[::nplot], linewidth=1.0, label='Xe1')
-plt.plot(x[::nplot], pocket_XE2_dist_arr[::nplot], linewidth=1.0, label='Xe2')
-plt.plot(x[::nplot], pocket_XE3_dist_arr[::nplot], linewidth=1.0, label='Xe3')
-plt.plot(x[::nplot], pocket_XE4_dist_arr[::nplot], linewidth=1.0, label='Xe4')
-plt.plot(x[::nplot], pocket_XE5_dist_arr[::nplot], linewidth=1.0, label='B-state')
-plt.plot(x[::nplot], pocket_XE6_dist_arr[::nplot], color='black', linewidth=2.0, label='6')
-plt.plot(x[::nplot], pocket_XE7_dist_arr[::nplot], color='gray', linewidth=1.0, label='7')
-plt.plot(x[::nplot], pocket_XE8_dist_arr[::nplot], color='gold', linewidth=1.0, label='8')
-plt.plot(x[::nplot], pocket_XE9_dist_arr[::nplot], color='yellow', linewidth=1.0, label='9')
-plt.xlim(0,600)
-plt.legend(fancybox=True, loc='upper right', title='Distance H$_2$\nto Pocket', framealpha=1)
-plt.ylabel("Distance ($\mathrm{\AA}$)")
-tbox = TextArea(
-    'D',
-    textprops=dict(
-        color='k', fontsize=40, ha='center', va='center')
+if plotter == 1:
+    # plot in which pocket the H2 is
+    pocket_arr = []
+    scan_dist = 2500
+    for i in range(0, num_timesteps, scan_dist):
+        next100Pockets = smoothScan(pockets, i, scan_dist, num_timesteps)
+        pocket_arr += [next100Pockets]*scan_dist
+
+    plt.plot(x+1000, pocket_arr, 'b', linewidth=2.0, label='pocket state')
+    plt.plot(x[::nplot], pocket_arr[::nplot], 'ob', ms=3.0, linewidth=2.0)
+
+    # plt.ylabel("Pocket index", weight="bold")
+    tbox = TextArea(
+        'B',
+        textprops=dict(
+            color='k', fontsize=40, ha='center', va='center', weight="bold")
     )
-plt.ylim(0, 25)
+    plt.yticks(np.arange(1,10), ["Xe1", "Xe2", "Xe3", "Xe4", "B-state", "6", "7", "8", "9"])
+    plt.ylim(0,10)
+
+    # plt.subplots_adjust(left=0.2)
+
+
+
+else:
+    # plot all distances to H2 for debugging
+    plt.plot(x[::nplot], pocket_XE1_dist_arr[::nplot], linewidth=1.0, label='Xe1')
+    plt.plot(x[::nplot], pocket_XE2_dist_arr[::nplot], linewidth=1.0, label='Xe2')
+    plt.plot(x[::nplot], pocket_XE3_dist_arr[::nplot], linewidth=1.0, label='Xe3')
+    plt.plot(x[::nplot], pocket_XE4_dist_arr[::nplot], linewidth=1.0, label='Xe4')
+    plt.plot(x[::nplot], pocket_XE5_dist_arr[::nplot], linewidth=1.0, label='B-state')
+    plt.plot(x[::nplot], pocket_XE6_dist_arr[::nplot], color='black', linewidth=2.0, label='6')
+    plt.plot(x[::nplot], pocket_XE7_dist_arr[::nplot], color='gray', linewidth=1.0, label='7')
+    plt.plot(x[::nplot], pocket_XE8_dist_arr[::nplot], color='gold', linewidth=1.0, label='8')
+    plt.plot(x[::nplot], pocket_XE9_dist_arr[::nplot], color='yellow', linewidth=1.0, label='9')
+    plt.xlim(0,600)
+    plt.legend(fancybox=True, loc='upper right', title='Distance H$_2$\nto Pocket', framealpha=1, fontsize=SMALL_SIZE,
+               prop={'weight':'bold'}, title_fontproperties={'weight': 'bold'})
+    # plt.ylabel("Distance ($\mathrm{\AA}$)", weight='bold')
+    tbox = TextArea(
+        'D',
+        textprops=dict(
+            color='k', fontsize=40, ha='center', va='center', weight="bold")
+        )
+    plt.ylim(0, 25)
+    plt.xlabel("Time (ps)", weight='bold')
 
 anchored_tbox = AnchoredOffsetbox(
     loc="upper right", child=tbox, pad=0., frameon=False,
@@ -123,9 +133,17 @@ anchored_tbox = AnchoredOffsetbox(
     bbox_transform=ax.transAxes, borderpad=0.)
 ax.add_artist(anchored_tbox)
 
-plt.xlabel("Time (ps)")
 
 
+plt.xticks(weight='bold')
+plt.yticks(weight='bold')
 plt.xlim(0, 925)
-plt.savefig(dpi=400, fname="MorseMDCM_B", )
+
+plt.subplots_adjust(bottom=0.2)
+
+if plotter == 1:
+    plt.savefig(dpi=400, fname="MorseMDCMPocketIndex", transparent=True)
+else:
+    plt.savefig(dpi=400, fname="MorseMDCMdynamics", transparent=True)
+
 plt.show()

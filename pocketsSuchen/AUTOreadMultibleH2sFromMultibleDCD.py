@@ -26,9 +26,9 @@ def read_pocket_list(res_list):
     return np.array(pocket_indices)
 
 
-path_psf = '/home/kaeserj/Documents/pcbach_cluster_data/v10.H2.nonBonded.bondwiggle.with.5.H2/step3_pbcsetup.psf'
+path_psf = '../Data/v14/step3_pbcsetup.psf'
 
-file_dcd_prefix = "/home/kaeserj/Documents/pcbach_cluster_data/v10.H2.nonBonded.bondwiggle.with.5.H2/dyna"
+file_dcd_prefix = "../Data/v14/dyna11"
 file_dcd_suffix = ".dcd"
 start_dcd = 1
 end_dcd = 1
@@ -40,9 +40,9 @@ for i in range(start_dcd, end_dcd + 1):
 
 num_timesteps = 25000 * num_files
 
-H2_res_list = [156, 157, 158, 159, 160]
+H2_res_list = [156]
 
-for h2_index in range(2, 5):
+for h2_index in range(1):
 
     H1_string = "resname H2 and resid " + str(H2_res_list[h2_index]) + " and name H1"
     H2_string = "resname H2 and resid " + str(H2_res_list[h2_index]) + " and name H2"
