@@ -27,11 +27,11 @@ def read_pocket_list(res_list):
 
 split_dcd = ['.', 1]  # split a each '.' and take element [1] in filename_dcd
 
-path_psf = '/home/kaeserj/PycharmProjects/CurveFitMorse/Data/dcdForH2Bondwiggle/step3_pbcsetup.psf'
+path_psf = '../Data/v14/step3_pbcsetup.psf'
 
 datadir = '/Data/dcdForH2Bondwiggle'
 
-file_dcd = '/home/kaeserj/PycharmProjects/CurveFitMorse/Data/dcdForH2Bondwiggle/dyna1.dcd'
+file_dcd = '../Data/v14/dcdFiles/dyna11.dcd'
 
 timedt = 0.00025  # Time / frame in ps
 

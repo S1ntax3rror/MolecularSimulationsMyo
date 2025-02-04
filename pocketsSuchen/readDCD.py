@@ -27,9 +27,9 @@ def read_pocket_list(res_list):
 
 split_dcd = ['.', 1]  # split a each '.' and take element [1] in filename_dcd
 
-path_psf = '/home/kaeserj/PycharmProjects/CurveFitMorse/Data/step3_pbcsetup.psf'
+path_psf = '../Data/v14/step3_pbcsetup.psf'
 
-datadir = '/Data/dcdFiles'
+datadir = '../Data/v14/dcdFiles'
 
 file_list_dcd = []
 

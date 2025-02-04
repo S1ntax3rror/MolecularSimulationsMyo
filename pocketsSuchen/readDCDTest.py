@@ -26,9 +26,9 @@ def read_pocket_list(res_list):
     return np.array(pocket_indices)
 
 
-path_psf = '/home/kaeserj/Documents/pcbach_cluster_data/v10.H2.nonBonded.bondwiggle.with.5.H2/step3_pbcsetup.psf'
+path_psf = '../Data/v14/step3_pbcsetup.psf'
 
-file_dcd_prefix = "/home/kaeserj/Documents/pcbach_cluster_data/v10.H2.nonBonded.bondwiggle.with.5.H2/dyna"
+file_dcd_prefix = "../Data/v14/dcdFiles/dyna11"
 file_dcd_suffix = ".dcd"
 
 start_dcd = 1
