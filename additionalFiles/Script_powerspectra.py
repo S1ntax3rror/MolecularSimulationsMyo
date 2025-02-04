@@ -50,7 +50,7 @@ au2cminv = 1.0 * units.Hartree / units.J / (units._hplanck * units._c) * 1.e-2
 
 split_dcd = ['.', 1]  # split a each '.' and take element [1] in filename_dcd
 
-path_psf = '/home/kaeserj/PycharmProjects/CurveFitMorse/Data/dcdForH2Bondwiggle/step3_pbcsetup.psf'
+path_psf = '/Data/dcdForH2Bondwiggle/step3_pbcsetup.psf'
 
 datadir = '/Data/dcdForH2Bondwiggle'
 
