@@ -9,3 +9,5 @@ else:
     data_basepath = "/home/kaeserj/PycharmProjects/CurveFitMorse/Data/FrozenMyoglobinPDBs"
 
 co_or_no_CO = [""]
+
+main_directories =

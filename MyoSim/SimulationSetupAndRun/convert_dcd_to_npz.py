@@ -1,7 +1,6 @@
 import os
 import MDAnalysis
 import numpy as np
-from scipy.signal import correlate
 
 
 def read_pocket_list(res_list, dcd_univ):
@@ -15,6 +14,7 @@ def get_files(datadir_):
     dyna_files_ = []
     psf_files_ = []
     npz_files_ = []
+    files = os.listdir(datadir_)
     for file in files:
         if "dyna" in file:
             if "dcd" in file:
@@ -26,7 +26,14 @@ def get_files(datadir_):
             if debug:
                 print(os.path.isfile(datadir_ + "/" + file))
         elif ".npz" in file:
-            npz_files_.append(datadir_ + "/" + file)
+            npz_str = datadir_ + "/" + file
+            npz_files_.append(npz_str.replace(".npz", ""))
+
+    for file in dyna_files_:
+        if file.replace(".dcd", "") in npz_files_:
+            dyna_files_.remove(file)
+    dyna_files_.pop(-1)
+
     return dyna_files_, psf_files_
 
 
@@ -46,38 +53,42 @@ def generate_npz(dyna_files_, path_psf_):
         np.savez(distfile, coordinates=coords, types=types)
 
 
-live = False
-debug = True
+debug = False
 exec_one = False
 
 CO_atoms = ["resname CO and type C", "resname CO and type O"]
 
-if live:
-    if exec_one:
-        datadir = os.getcwd()
-        files = os.listdir(datadir)
-
-        dyna_files, psf_files = get_files(datadir)
-
-        if debug:
-            print(dyna_files)
-
-        path_psf = psf_files[0]
-        generate_npz(dyna_files, path_psf)
-
-    else:
-        cwd = os.getcwd()
-        sim_dirs = ["WITH_CO_V2", "NO_CO_V2"]
-        temp_dirs = ["1K", "5K", "10K", "50K", "100K", "300K"]
-        for sim_dir in sim_dirs:
-            for temp_dir in temp_dirs:
-                sub_dirs = sorted(os.listdir(temp_dir))
-                for sub_dir in sub_dirs:
-
-
-else:
-    datadir = "/home/kaeserj/PycharmProjects/CurveFitMorse/Data/FrozenMyoglobinPDBs"
+if exec_one:
+    datadir = os.getcwd()
     files = os.listdir(datadir)
 
+    dyna_files, psf_files = get_files(datadir)
 
+    if debug:
+        print(dyna_files)
 
+    path_psf = psf_files[0]
+    generate_npz(dyna_files, path_psf)
+
+else:
+    cwd = os.getcwd()
+    sim_dirs = [cwd + "/WITH_CO_V2/", cwd + "/NO_CO_V2/"]
+    temp_dirs = ["1K", "5K", "10K", "50K", "100K", "300K"]
+    temp_dirs = ["50K", "100K", "300K"]
+    possible_sub_dirs = np.arange(1, 51).tolist()
+    for i in range(len(possible_sub_dirs)):
+        possible_sub_dirs[i] = str(possible_sub_dirs[i])
+
+    for sim_dir in sim_dirs:
+        for temp_dir in temp_dirs:
+            sub_dirs = sorted(os.listdir(sim_dir + temp_dir))
+            print(temp_dir)
+            for sub_dir in sub_dirs:
+                if sub_dir in possible_sub_dirs:
+                    active_dir = sim_dir + temp_dir + "/" + sub_dir
+
+                    dyna_files, psf_files = get_files(active_dir)
+
+                    psf_file = psf_files[0]
+
+                    generate_npz(dyna_files, psf_file)
