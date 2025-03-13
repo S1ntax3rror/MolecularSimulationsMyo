@@ -37,7 +37,7 @@ def get_num_jumps_in_npz(file):
     max_norm = 0
 
     for coord in normalized_coords:
-        print(coord, mean)
+        # print(coord[0][0], coord[0][1], coord[0][2])
         norm = np.linalg.norm(coord)
 
         if norm > 2:
@@ -45,7 +45,7 @@ def get_num_jumps_in_npz(file):
 
         if max_norm < norm:
             max_norm = norm
-    print(max_norm)
+    print("largest distance to mean position", max_norm)
     return count
 
 
@@ -78,6 +78,7 @@ for sim_dir in sim_dirs:
                 npz_files = get_npz_files(active_dir)
 
                 for npz_file in npz_files:
-                    number_of_jumps += get_num_jumps_in_npz(active_dir + "/" + npz_file)
+                    if "dyna_storage.npz" in npz_file:
+                        number_of_jumps += get_num_jumps_in_npz(active_dir + "/" + npz_file)
 
         print(number_of_jumps)

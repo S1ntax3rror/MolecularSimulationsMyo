@@ -193,7 +193,7 @@ for h2_index in range(1):
         print("evaluating file " + str(i+1) + " for H2 " + str(h2_index+1))
         for jj, frame in enumerate(dcd_list[i].trajectory[:num_timesteps]):
 
-            if not count%1000:
+            if not count % 1000:
                 print("frame: "+str(count))
 
             count += 1

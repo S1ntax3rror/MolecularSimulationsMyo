@@ -3,6 +3,8 @@ import sys
 
 import MDAnalysis
 import numpy as np
+import datetime
+from statsmodels.imputation.ros import impute_ros
 
 
 def read_pocket_list(res_list, dcd_univ):
@@ -12,7 +14,7 @@ def read_pocket_list(res_list, dcd_univ):
     return np.array(pocket_indices)
 
 
-def get_files(datadir_, check_files=False):
+def get_files(datadir_, check_files=True):
     dyna_files_ = []
     psf_files_ = []
     npz_files_ = []
@@ -21,47 +23,73 @@ def get_files(datadir_, check_files=False):
         if "dyna" in file:
             if "dcd" in file:
                 dyna_files_.append(datadir_ + "/" + file)
-                if debug:
-                    print(os.path.isfile(datadir_ + "/" + file))
+                if debug and debug_mode == 2:
+                    print("dcd file exists: ", os.path.isfile(datadir_ + "/" + file))
             elif ".npz" in str(file):
                 npz_str = datadir_ + "/" + file
                 npz_str = npz_str.replace(".npz", ".dcd")
                 npz_files_.append(npz_str)
         elif ".psf" in file:
             psf_files_.append(datadir_ + "/" + file)
-            if debug:
-                print(os.path.isfile(datadir_ + "/" + file))
+            if debug and debug_mode == 2:
+                print("PSF file exists:", os.path.isfile(datadir_ + "/" + file))
+
+    if debug and debug_mode == 2:
+        print("-----------------before------------------")
+        print("NPZ:: \n", npz_files_)
+        print("DYNA:: \n", dyna_files_)
+
     if check_files:
         copy_dyna_files_ = dyna_files_.copy()
         for file in copy_dyna_files_:
             if file in npz_files_:
                 dyna_files_.remove(file)
         if len(dyna_files_) > 0:
+            dyna_files_ = sorted(dyna_files_)
             dyna_files_.pop(-1)
-        print("NPZ:: \n", npz_files_)
-        print("DYNA:: \n", dyna_files_)
+
+        if debug and debug_mode == 2:
+            print("-----------------after------------------")
+            print("NPZ:: \n", npz_files_)
+            print("DYNA:: \n", dyna_files_)
 
     return dyna_files_, psf_files_
 
 
 def generate_npz(dyna_files_, path_psf_):
-
-    if len(dyna_files_) < 1:
+    if len(dyna_files_) == 0:
         return
 
-    with open(out_filepath, "a") as file:
-        file.write("\n" + "generating npz for " + str(dyna_files_[0]))
-        file.close()
+    indcs = []
 
-    print("generating npz for", dyna_files_)
-    distfile = dyna_files_[0].replace(".dcd", "") + "all" + ".npz"
+    for ff in dyna_files_:
+        idx = int(ff.split("dyna")[-1].split(".")[0])
+        indcs.append(idx)
+    isorted = np.argsort(indcs)
+    dyna_files_ = np.array(dyna_files_)[isorted]
+    dyna_files_ = dyna_files_.tolist()
+
+    with open(out_filepath, "a") as file:
+        file.write("\n" + "generating npz for " + str(dyna_files_[0]) + ":::: time is: " + str(datetime.datetime.now()))
+        file.close()
+    if debug:
+        print("generating npz for", str(dyna_files_[0]))
+    distfile = path_psf_[:-18] + "dyna_storage"
+    distfile = distfile + ".npz"
+
     dcd = MDAnalysis.Universe(path_psf_, dyna_files_)
 
-    CO = dcd.select_atoms("resname CO")
-    coords = []
+    coords = np.zeros((len(dcd.trajectory), 2, 3))
 
-    for ts in dcd.trajectory:
-        coords.append(CO.positions)
+    CO = dcd.select_atoms("resname CO")
+    CO_coords = dcd.select_atoms("resname CO").ix[0]
+    for i, ts in enumerate(dcd.trajectory):
+        coords[i] = ts._pos[CO_coords]
+        if not i%1000:
+            with open(out_filepath, "a") as file:
+                file.write(f"Step {i:8d}/{len(dcd.trajectory):8d}, time: " + str(datetime.datetime.now()))
+                file.close()
+            print(f"Step {i:8d}/{len(dcd.trajectory):8d}, time: ", datetime.datetime.now())
     coords = np.array(coords)
 
     types = np.array([str(CO.types[0]), str(CO.types[1])])
@@ -73,18 +101,22 @@ if __name__ == "__main__":
 
     if len(sys.argv) == 2:
         temp_dirs = [sys.argv[1]]
+        out_filepath = "converterOUT" + str(sys.argv[1]) + ".txt"
     else:
         temp_dirs = ["1K", "5K", "10K", "50K", "100K", "300K"]
-        temp_dirs = ["50K", "100K", "300K"]
+        #temp_dirs = ["50K", "100K", "300K"]
+        out_filepath = "converterOUT.txt"
+
     debug = False
+    debug_mode = 2
     exec_one = False
+    test_1 = False
+    check_for_npz_already_existing = False
 
     CO_atoms = ["resname CO and type C", "resname CO and type O"]
 
-    out_filepath = "converterOUT.txt"
-    if not os.path.exists(out_filepath):
-        with open(out_filepath, "w") as file:
-            pass
+    with open(out_filepath, "w") as file:
+        file.write("")
 
     if exec_one:
         datadir = os.getcwd()
@@ -100,27 +132,45 @@ if __name__ == "__main__":
 
     else:
         cwd = os.getcwd()
-        sim_dirs = [cwd + "/WITH_CO_V2/", cwd + "/NO_CO_V2/"]
-        possible_sub_dirs = np.arange(1, 51).tolist()
-        for i in range(len(possible_sub_dirs)):
-            possible_sub_dirs[i] = str(possible_sub_dirs[i])
+        if debug:
+            print("cwd:", cwd)
+
+        if test_1:
+            sim_dirs = [cwd + "/NO_CO_V2/"]
+            possible_sub_dirs = "1"
+        else:
+            sim_dirs = [cwd + "/WITH_CO_V2/", cwd + "/NO_CO_V2/"]
+            possible_sub_dirs = np.arange(1, 51).tolist()
+
+            for i in range(len(possible_sub_dirs)):
+                possible_sub_dirs[i] = str(possible_sub_dirs[i])
 
         for sim_dir in sim_dirs:
             for temp_dir in temp_dirs:
                 sub_dirs = sorted(os.listdir(sim_dir + temp_dir))
-                print(temp_dir)
+
                 for sub_dir in sub_dirs:
                     if sub_dir in possible_sub_dirs:
                         active_dir = sim_dir + temp_dir + "/" + sub_dir
-                        print("active_dir", active_dir)
-                        dyna_files, psf_files = get_files(active_dir)
-                        print("GET files complete")
 
-                        psf_file = psf_files[0]
+                        if debug:
+                            print("active_dir", active_dir)
 
-                        print("start gen of npz files")
+                        dyna_files, psf_files = get_files(active_dir, check_for_npz_already_existing)
+
+                        if debug:
+                            print("GET filses complete")
+
+                        psf_file = psf_files[-1]
+
+                        if debug:
+                            print("start gen of npz files")
+
                         generate_npz(dyna_files, psf_file)
-                        print("Completed npz file gen")
+
+                        if debug:
+                            print("Completed npz file gen")
+
                         with open(out_filepath, "a") as file:
                             file.write("\n" + "Writing to tempdir" + temp_dir + " subdir" + str(sub_dir))
                             file.close()
