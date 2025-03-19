@@ -17,7 +17,7 @@ def get_npz_files(active_directory):
     npz_list = []
 
     for file in files:
-        if ".npz" in file:
+        if "storage.npz" in file:
             npz_list.append(file)
 
     return npz_list
@@ -99,12 +99,11 @@ for sim_dir in sim_dirs:
         print("processing directory " + sim_dir.replace(cwd, "") + "/" + temp_dir)
 
         number_of_jumps = 0
+        all_pockets = None
 
         for sub_dir in sub_dirs:
-
             if sub_dir in possible_sub_dirs:
                 active_dir = sim_dir + temp_dir + "/" + sub_dir
-
                 npz_files = get_npz_files(active_dir)
 
                 for npz_file in npz_files:
@@ -116,17 +115,36 @@ for sim_dir in sim_dirs:
 
                         data = np.load(active_dir + "/" + npz_file)
                         coordinates = data["coordinates"]
-
                         normalized_coords = coordinates - fe_pos
 
-                        norm_list = np.zeros((len(normalized_coords)))
+                        norm_list = np.linalg.norm(normalized_coords, axis=(1, 2))
 
-                        for i, coord in enumerate(normalized_coords):
-                            # print(coord[0][0], coord[0][1], coord[0][2])
-                            norm = np.linalg.norm(coord)
-                            norm_list[i] = norm
+                        if all_pockets is None:
+                            all_pockets = norm_list
+                        else:
+                            print("all pockets", all_pockets)
+                            print("norm list", norm_list)
+                            print(len(all_pockets))
+                            all_pockets = np.concatenate((all_pockets, norm_list))
+                            print(len(all_pockets))
 
-                        plt.plot(np.arange(len(coordinates)), norm_list, marker='o', s=0.1)
-                        plt.show()
+                        # for i, coord in enumerate(normalized_coords):
+                        #     norm_list[i] = np.linalg.norm(coord)
 
-        print(number_of_jumps)
+                        # print("linalg", np.linalg.norm(normalized_coords, axis=(1, 2)))
+                        # print("norm", norm_list)
+        if not (all_pockets is None):
+            plt.clf()
+            plt.close()
+
+            plt.ylabel("Distance to FE in Angström")
+            plt.xlabel("Frame number")
+            plt.plot(np.arange(len(all_pockets)), all_pockets, linewidth=0.05)
+
+            if "WITH_CO_V2" in sim_dir:
+                plt.savefig(cwd + "/W_CO_" + temp_dir + ".png")
+            else:
+                plt.savefig(cwd + "/NO_CO_" + temp_dir + ".png")
+            plt.show()
+
+        #print(number_of_jumps)
