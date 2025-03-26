@@ -80,7 +80,7 @@ energy
 mini SD   nstep 50 nprint 5
 mini ABNR nstep 50 nprint 5
 
-open write unit 10 card name step4_mini.pdb
+XREF 39.547943 YREF 36.958336 ZREF 33.40539 -
 write coor unit 10 pdb
 
 
@@ -96,7 +96,7 @@ write coor unit 10 pdb
 ! to avoid any unstable dynamics and thus abnormal termination.
 ! However, it might be possible to increase it to 2 fs in most applications.
 !
-
+set temp = 1
 set nstep =  40000 
 set temp = 303.15
 
@@ -111,7 +111,7 @@ DYNA VVER start timestep 0.001 nstep @nstep -
      iunread -1 iunwri 12 iuncrd 13 iunvel -1 kunit -1 -
      nsavc 250 nsavv 0 -
      nose rstn tref @temp qref 50 ncyc 10 firstt @temp
-set temp = 1
+
 open write unit 10 card name step4_equilibration.pdb
 write coor unit 10 pdb
 

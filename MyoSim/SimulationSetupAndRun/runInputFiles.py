@@ -1,8 +1,10 @@
 import subprocess
 import os
 
+
 def get_subfolders():
     return os.listdir("../")
+
 
 paths = get_subfolders()
 
