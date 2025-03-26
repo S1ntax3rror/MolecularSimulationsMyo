@@ -1,8 +1,5 @@
 import os
-import shutil
 import sys
-
-import MDAnalysis as mda
 
 
 def get_hem5_identifier_and_charges():
@@ -32,8 +29,6 @@ def get_hem5_identifier_and_charges():
 
     return HEM5_lines
 
-
-print(sys.argv)
 
 # Check input
 if len(sys.argv) < 2:
@@ -123,20 +118,3 @@ if case.strip().lower() == 'heme':
     with open(crdfile, 'w') as fcrd:
         fcrd.writelines(newlines)
 
-# For case 'counter':
-# Replace sodium cations with dummy atoms
-if case.strip().lower() == 'counter':
-
-    # Check psf file
-    psffile = os.path.join(cwd, "init_setup.psf")
-    if not os.path.exists(psffile):
-        raise SyntaxError("Missing psf file: ", psffile)
-
-    # Check crd file
-    crdfile = os.path.join(cwd, "init_setup.crd")
-    if not os.path.exists(psffile):
-        raise SyntaxError("Missing crd file: ", crdfile)
-
-    # Count total charge
-    system = mda.Universe(psffile, crdfile)
-    print(sum(system._topology.charges.values))
