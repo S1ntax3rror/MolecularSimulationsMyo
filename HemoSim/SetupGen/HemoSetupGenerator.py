@@ -1,14 +1,15 @@
 import os
 import shutil
+from gettext import lngettext
 from os import mkdir
 from distutils.dir_util import copy_tree
 
 
 def generate_all_permutations_unbound(active_directory, base_setup_directory):
-    line1 = "patch ULIG COA    1 HETA 142 PROA 87 noangle nodihedral"
-    line2 = "patch ULIG COB    1 HETB 147 PROB 92 noangle nodihedral"
-    line3 = "patch ULIG COC    1 HETC 142 PROC 87 noangle nodihedral"
-    line4 = "patch ULIG COD    1 HETD 147 PROD 92 noangle nodihedral"
+    line1 = "set co1"
+    line2 = "set co2"
+    line3 = "set co3"
+    line4 = "set co4"
 
     for bond_1 in range(2):
         for bond_2 in range(2):
@@ -19,21 +20,33 @@ def generate_all_permutations_unbound(active_directory, base_setup_directory):
                         bond_3) + str(bond_4)
                     mkdir(current_dir)
                     copy_tree(base_setup_directory, current_dir)
-                    path_step6 = current_dir + "/" + "gpu_step6_manipulation.inp"
-                    with open(path_step6, "r") as f:
+                    path_step4 = current_dir + "/" + "step_4_generate_valid_setup.inp"
+                    with open(path_step4, "r") as f:
                         text = f.readlines()
                         text_copy = text.copy()
                         for i, line in enumerate(text):
-                            if line1 in line and bond_1 == 1:
-                                text_copy[i] = "!" + line1 + "\n"
-                            elif line2 in line and bond_2 == 1:
-                                text_copy[i] = "!" + line2 + "\n"
-                            elif line3 in line and bond_3 == 1:
-                                text_copy[i] = "!" + line3 + "\n"
-                            elif line4 in line and bond_4 == 1:
-                                text_copy[i] = "!" + line4 + "\n"
+                            if line1 in line:
+                                if bond_1 == 0:
+                                    text_copy[i] = line1 + " 1\n"
+                                else:
+                                    text_copy[i] = line1 + " 0\n"
+                            if line2 in line:
+                                if bond_2 == 0:
+                                    text_copy[i] = line2 + " 1\n"
+                                else:
+                                    text_copy[i] = line2 + " 0\n"
+                            if line3 in line:
+                                if bond_3 == 0:
+                                    text_copy[i] = line3 + " 1\n"
+                                else:
+                                    text_copy[i] = line3 + " 0\n"
+                            if line4 in line:
+                                if bond_4 == 0:
+                                    text_copy[i] = line4 + " 1\n"
+                                else:
+                                    text_copy[i] = line4 + " 0\n"
                         f.close()
-                    with open(path_step6, "w") as f:
+                    with open(path_step4, "w") as f:
                         f.writelines(text_copy)
                         f.close()
 
@@ -49,10 +62,10 @@ if __name__ == "__main__":
         live = True
 
     hemo_base_path = cwd + "/" + "HemoBase"
-    path_setup_destination = "all_permutations_unbound"
+    path_setup_destination = "all_perm_unbound_with_ghosts"
 
     if live:
-        hemo_base_path = cwd + "/" + "Kai_setup"
+        hemo_base_path = cwd + "/" + "V3_Kai_setup"
 
     if os.path.exists(cwd + "/" + path_setup_destination) and (not overwrite and not live):
         print("EITHER SET OVERWRITE TRUE OR CHANGE PATH")

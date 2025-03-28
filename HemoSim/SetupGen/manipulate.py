@@ -1,6 +1,8 @@
 import os
 import sys
 
+from MyoSim.SimulationSetupAndRun.getPocketCenterOfPDB import read_pocket_list
+
 
 def get_hem5_identifier_and_charges():
     with open(cwd + "/toppar/toppar_all36_prot_heme.str") as f:
@@ -97,6 +99,7 @@ if case.strip().lower() == 'heme':
     replacer = dumdum[:11] + "DUM" + dumdum[14:20] + f"{str(num_dumdum):2s}" + dumdum[22:29] + f"{'DUM':3s}" + "      DUM      DUM    " + f"{float(0.00000):11f}" + "      " + dumdum[71:]
     newlines[i] = replacer
 
+    dum_id = replacer[len("     "):len("     67954")]
     # print(num_dumdum)
     # print(dumdum)
     # print(replacer)
@@ -114,6 +117,10 @@ if case.strip().lower() == 'heme':
     for il, line in enumerate(crdlines):
         if segment in line and not "NTHETA" in line:
             newlines[il] = line[:22] + f"{residue:4s}" + line[26:]
+        if dum_id in line[:len("     67926    ")]:
+            replacer = line[:22] + "DUM       DUM" + line[22 + len("DUM       DUM"):102] + "DUM" + line[105:]
+            newlines[il] = replacer
+
     # Write manipulated crd file
     with open(crdfile, 'w') as fcrd:
         fcrd.writelines(newlines)

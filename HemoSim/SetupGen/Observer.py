@@ -13,6 +13,7 @@ import getpass
 
 # CHARMM input, output and slurm submission files
 runfile = "run.sh"
+setupfile = "create_run_setup.sh"
 inpfile = "gpu_step5_production.inp"
 outfile = "gpu_step5_production.out"
 
@@ -68,6 +69,16 @@ def update_inpfile(new_step):
 
 
 # Function to submit simulation
+def submit_setupfile():
+    # Submit run script file
+    task = subprocess.run(['sbatch', setupfile], capture_output=True)
+
+    # Read slurm id
+    tskid = int(task.stdout.split()[-1])
+
+    return tskid
+
+# Function to submit simulation
 def submit_runfile():
     # Submit run script file
     task = subprocess.run(['sbatch', runfile], capture_output=True)
@@ -119,6 +130,9 @@ def check_status(tskid):
     else:
         print("")
         print(datetime.datetime.now(), f": Job {tskid:d} done.")
+
+    if not os.path.exists(os.path.join(os.getcwd(), outfile)):
+        return tskid
 
     # Read output file
     with open(outfile, 'r') as f:
@@ -199,8 +213,8 @@ if __name__ == "__main__":
     # Update input file with new step
     update_inpfile(new_step)
 
-    # Submit simulation
-    tskid = submit_runfile()
+    # Submit initial simulation setup
+    tskid = submit_setupfile()
     print(f"Initial task id: {tskid:d}")
 
     # Run observation
