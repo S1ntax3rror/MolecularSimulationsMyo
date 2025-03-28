@@ -2,3 +2,8 @@
 *.npz
 *.npy
 *.tga
+*.png
+*.str
+*.inp
+*.out
+*.prm
