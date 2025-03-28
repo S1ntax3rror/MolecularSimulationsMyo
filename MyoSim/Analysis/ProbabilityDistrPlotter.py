@@ -3,7 +3,6 @@ import os
 import MDAnalysis
 import numpy as np
 from matplotlib import pyplot as plt
-from statsmodels.stats.correlation_tools import corr_nearest
 
 
 def get_npz_files(active_directory):
@@ -117,7 +116,7 @@ for sim_dir in sim_dirs:
                         coordinates = data["coordinates"]
                         normalized_coords = coordinates - fe_pos
 
-                        norm_list = np.linalg.norm(normalized_coords, axis=(1, 2))
+                        norm_list = np.linalg.norm(normalized_coords, axis=(1, 2))  # calc dist to FE
 
                         if all_pockets is None:
                             all_pockets = norm_list
@@ -128,11 +127,6 @@ for sim_dir in sim_dirs:
                             all_pockets = np.concatenate((all_pockets, norm_list))
                             print(len(all_pockets))
 
-                        # for i, coord in enumerate(normalized_coords):
-                        #     norm_list[i] = np.linalg.norm(coord)
-
-                        # print("linalg", np.linalg.norm(normalized_coords, axis=(1, 2)))
-                        # print("norm", norm_list)
         if not (all_pockets is None):
             plt.clf()
             plt.close()

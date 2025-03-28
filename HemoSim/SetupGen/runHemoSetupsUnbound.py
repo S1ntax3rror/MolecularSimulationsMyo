@@ -1,5 +1,6 @@
 import subprocess
 import os
+from multiprocessing import Pool
 
 
 def replace_line_in_file(file, old_line, new_line):
@@ -15,9 +16,18 @@ def replace_line_in_file(file, old_line, new_line):
         f.close()
 
 
+def observe_run(path):
+    result = subprocess.run(['python3', 'Observer.py'], capture_output=True, text=True, cwd=path)
+    text = result.stdout
+    text_err = result.stderr
+
+    with open("outfile_sh.out", "w") as file:
+        file.write(text)
+        file.write(text_err)
+
 if __name__ == "__main__":
     cwd = os.getcwd()
-    active_dir = cwd + "/" + "all_permutations_unbound/"
+    active_dir = cwd + "/" + "all_perm_unbound_with_ghosts/"
 
     paths = os.listdir(active_dir)
 
@@ -30,11 +40,14 @@ if __name__ == "__main__":
     print(sh_file_paths)
     good_gpus = ["gpu04", "gpu25", "gpu06", "gpu26", "gpu03", "gpu12", "gpu13", "gpu18", "gpu01", "gpu02"]
 
-    for path in sh_file_paths:
-        result = subprocess.run(['sbatch', 'run.sh'], capture_output=True, text=True, cwd=path)
-        text = result.stdout
-        text_err = result.stderr
+    with Pool(processes=len(sh_file_paths)) as pool:
+        pool.map(observe_run, sh_file_paths)
 
-        with open("outfile_sh.out", "w") as file:
-            file.write(text)
-            file.write(text_err)
+    # for path in sh_file_paths:
+    #     result = subprocess.run(['python3', 'Observer.py'], capture_output=True, text=True, cwd=path)
+    #     text = result.stdout
+    #     text_err = result.stderr
+    #
+    #     with open("outfile_sh.out", "w") as file:
+    #         file.write(text)
+    #         file.write(text_err)
