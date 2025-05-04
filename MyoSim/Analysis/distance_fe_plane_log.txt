@@ -1,0 +1,3 @@
+In directory /home/jiri/Documents/Projects/MolecularSimulationsMyo/MyoSim/Analysis/../SimulationSetupAndRun/NO_CO_V2/1K/1: distance to plane: -0.3976975977420807 
+In directory /home/jiri/Documents/Projects/MolecularSimulationsMyo/MyoSim/Analysis/../SimulationSetupAndRun/NO_CO_V2/1K/1: distance to plane: -0.3976975977420807 
+In directory /home/jiri/Documents/Projects/MolecularSimulationsMyo/MyoSim/Analysis/../SimulationSetupAndRun/NO_CO_V2/1K/1: distance to plane: -0.3976975977420807 

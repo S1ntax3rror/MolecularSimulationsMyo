@@ -95,20 +95,20 @@ def plot_temp_dir(curr_dir):
                     # Grid for better readability
                     plt.grid(axis="y", linestyle="--", alpha=0.7)
 
-                    if "WITH_CO_V2" in curr_dir:
-                        print("saving figure" + " pictures/CO/" + curr_dir.split("/")[-1] + active_dir.split("/")[-1] + ".png")
-                        plt.savefig("pictures/CO/" + curr_dir.split("/")[-1] + active_dir.split("/")[-1] + ".png")
+                    if live:
+                        if "WITH_CO_V2" in curr_dir:
+                            print("saving figure" + " pictures/CO/" + curr_dir.split("/")[-1] + active_dir.split("/")[-1] + ".png")
+                            plt.savefig("pictures/CO/" + curr_dir.split("/")[-1] + active_dir.split("/")[-1] + ".png")
+                        else:
+                            plt.savefig("pictures/NO_CO/" + curr_dir.split("/")[-1] + active_dir.split("/")[-1] + ".png")
+                            print("saving figure" + "pictures/NO_CO/" + curr_dir.split("/")[-1] + ".png")
                     else:
-                        plt.savefig("pictures/NO_CO/" + curr_dir.split("/")[-1] + active_dir.split("/")[-1] + ".png")
-                        print("saving figure" + "pictures/NO_CO/" + curr_dir.split("/")[-1] + ".png")
-
-                    if not live:
                         plt.show()
 
 
 
 
-live = True
+live = False
 
 if live:
     cwd = os.getcwd()
@@ -118,6 +118,8 @@ else:
 sim_dirs = [cwd + "/WITH_CO_V2/", cwd + "/NO_CO_V2/"]
 # temp_dirs = ["1K", "5K", "10K", "50K", "100K", "300K"]
 temp_dirs = ["50K", "100K", "300K"]
+if not live:
+    temp_dirs = ["1K"]
 
 total_dirs_w = []
 total_dirs_n = []
@@ -134,5 +136,10 @@ for temp_dir in temp_dirs:
 # with Pool(processes=len(total_dirs_n)) as pool:
 #     pool.map(plot_temp_dir, total_dirs_n)
 
-with Pool(processes=len(total_dirs)) as pool:
-    pool.map(plot_temp_dir, total_dirs)
+
+if not live:
+    for _dir in total_dirs:
+        plot_temp_dir(_dir)
+else:
+    with Pool(processes=len(total_dirs)) as pool:
+        pool.map(plot_temp_dir, total_dirs)
