@@ -1,9 +1,6 @@
 import os
 import sys
 
-from MyoSim.SimulationSetupAndRun.getPocketCenterOfPDB import read_pocket_list
-
-
 def get_hem5_identifier_and_charges():
     with open(cwd + "/toppar/toppar_all36_prot_heme.str") as f:
         topparlines = f.readlines()
@@ -32,6 +29,8 @@ def get_hem5_identifier_and_charges():
     return HEM5_lines
 
 
+debug = True
+
 # Check input
 if len(sys.argv) < 2:
     raise SyntaxError("Input to small: ", sys.argv)
@@ -39,6 +38,8 @@ if len(sys.argv) < 2:
 # Get case label
 case = sys.argv[1]
 cwd = os.getcwd()
+if debug:
+    cwd = "UnboundSetup"
 
 # For case 'heme':
 # Replace residue labels of the particular segment with the defined residue
@@ -100,9 +101,6 @@ if case.strip().lower() == 'heme':
     newlines[i] = replacer
 
     dum_id = replacer[len("     "):len("     67954")]
-    # print(num_dumdum)
-    # print(dumdum)
-    # print(replacer)
 
     # Write manipulated psf file
     with open(psffile, 'w') as fpsf:
@@ -125,3 +123,82 @@ if case.strip().lower() == 'heme':
     with open(crdfile, 'w') as fcrd:
         fcrd.writelines(newlines)
 
+# remove co in the run file after patching the init file
+if case.strip().lower() == 'co':
+    print("entering co")
+    # Check input
+    if len(sys.argv) < 3:
+        raise SyntaxError("Input to small for HEME manipulation: ", sys.argv)
+
+    segment = sys.argv[2]
+
+    # Check psf file
+    psffile = os.path.join(cwd, "run_setup.psf")
+    if not os.path.exists(psffile):
+        print(psffile)
+        raise SyntaxError(f"Missing psf file: {psffile}")
+
+    # Check crd file
+    crdfile = os.path.join(cwd, "run_setup.crd")
+    if not os.path.exists(psffile):
+        raise SyntaxError(f"Missing psf file: {crdfile}")
+
+    # Read psf file
+    with open(psffile, 'r') as fpsf:
+        psflines = fpsf.readlines()
+        fpsf.close()
+    newlines = psflines.copy()
+
+    # Read crd file
+    with open(crdfile, 'r') as fcrd:
+        crdlines = fcrd.readlines()
+    newlines_crd = crdlines.copy()
+
+    # Collect sodium
+    CO_list = []
+    num_dumdum = 1
+    for i, line in enumerate(psflines):
+        if segment in line:
+            CO_list.append([line, i])
+        if "DUM      DUM      DUM" in line:
+            num_dumdum += 1
+
+    # Replace CO[A,B,C,D] by ghost (DUM) -> empty
+    for dumdum_i in CO_list:
+        i = dumdum_i[1]
+        dumdum = dumdum_i[0]
+        replacer = dumdum[:11] + "DUM" + dumdum[14:20] + f"{str(num_dumdum):2s}" + dumdum[22:29] + f"{'DUM':3s}" + "      DUM      DUM    " + f"{float(0.00000):11f}" + "      " + dumdum[71:]
+        newlines[i] = replacer
+        print(f"PSF replacer {replacer}")
+        dum_id = replacer[len("     "):len("     67954")]
+        print(f"dumdum id {dum_id}")
+
+        # count number of dum dum's
+        num_dumdum = 0
+        for il, line in enumerate(crdlines):
+            if "DUM       DUM          " in line:
+                num_dumdum += 1
+
+        # Assign segment the defined residue
+        for il, line in enumerate(crdlines):
+            if dum_id in line[:len("     67926    ")]:
+                replacer = line[:22] + "DUM       DUM" + line[22 + len("DUM       DUM"):102] + "DUM" + line[105:]
+                print(f"new LINE:::: {newlines_crd[il]}")
+                newlines_crd[il] = replacer
+                print(f"CRD replacer {replacer}")
+
+    # Write manipulated psf file
+    if debug:
+        with open("text_psf.psf", 'w') as fpsf:
+            fpsf.writelines(newlines)
+    else:
+        with open(psffile, 'w') as fpsf:
+            fpsf.writelines(newlines)
+
+    # Write manipulated crd file
+    if debug:
+        with open("test_crd.crd", 'w') as fcrd:
+            fcrd.writelines(newlines_crd)
+    else:
+        with open(crdfile, 'w') as fcrd:
+            fcrd.writelines(newlines_crd)
